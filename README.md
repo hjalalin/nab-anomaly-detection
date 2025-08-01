@@ -14,4 +14,4 @@ The NAB dataset includes:
 
 ## About me
 Hoda Jalali
-LinkedIN: https://www.linkedin.com/in/hoda-jalali/
+LinkedIn: https://www.linkedin.com/in/hoda-jalali/
