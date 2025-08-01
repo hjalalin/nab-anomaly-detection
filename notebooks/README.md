@@ -9,11 +9,6 @@ Each folder represents a separate time series subject and includes exploration, 
 - Time series of industrial machine temperature from the NAB dataset
 - Focused on LSTM-based anomaly detection and trend detection
 
-### `aws_metrics/`
-- EC2 CPU, RDS, and network data from AWS CloudWatch
-- Explores forecasting and unsupervised anomaly detection
-
-
 ## Topics Covered
 
 - Data exploration and visualization
