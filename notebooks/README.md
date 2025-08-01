@@ -1,24 +1,27 @@
 # Notebooks
 
-This folder contains all notebooks for the NAB anomaly detection project. The notebooks are grouped by topic to keep things organized and easy to follow.
+This directory contains notebooks organized by dataset source.  
+Each folder represents a separate time series subject and includes exploration, modeling, and evaluation steps.
 
 ## Folder Structure
 
-- **01_exploration/**  
-  Initial data exploration and visualization.
+### `machine_temperature/`
+- Time series of industrial machine temperature from the NAB dataset
+- Focused on LSTM-based anomaly detection and trend detection
 
-- **02_classical_models/**  
-  Basic models like Z-score, moving average, and Prophet.
+### `aws_metrics/`
+- EC2 CPU, RDS, and network data from AWS CloudWatch
+- Explores forecasting and unsupervised anomaly detection
 
-- **03_unsupervised_models/**  
-  Anomaly detection using models like Isolation Forest and One-Class SVM.
 
-- **04_deep_learning/**  
-  LSTM and deep learning models for detecting anomalies.
+## Topics Covered
 
-- **05_trend_detection/**  
-  Notebooks to detect trends or gradual changes in the data.
+- Data exploration and visualization
+- Classical anomaly detection methods
+- Machine learning & unsupervised models
+- LSTM and deep learning-based detection
+- Trend detection and rolling statistics
+- Model evaluation and comparison
 
-- **06_evaluation/**  
-  Compare model performance and evaluate results.
 
+> Each folder is self-contained and serves as a mini-project for a specific dataset type.
