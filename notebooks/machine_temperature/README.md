@@ -1,33 +1,35 @@
 # Machine Temperature Dataset
 
-This folder contains notebooks analyzing the `machine_temperature_system_failure.csv` dataset from the NAB (Numenta Anomaly Benchmark).
+This folder contains notebooks analyzing the `machine_temperature_system_failure.csv` dataset from the NAB (Numenta Anomaly Benchmark). This is a univariate time-series with labeled anomalies.
 The dataset captures temperature readings of an industrial machine leading up to a known system failure. 
 
 ## Notebooks Included
 
 - `01_exploration.ipynb`  
-  Basic data inspection and time series plots.
+Visualizes the raw temperature time series, inspects statistical properties
 
 - `02_statistical_methods.ipynb`  
-  Z-score thresholding and rolling mean-based anomaly detection.
+Implements statistical anomaly detection methods including Z-score, rolling mean, IQR, and MAD. Detected anomalies are compared directly against NAB-provided ground truth intervals.
 
 - `03_lstm_autoencoder.ipynb`  
-  LSTM autoencoder trained on normal data to detect anomalies via reconstruction error.
+Trains an LSTM autoencoder on normal segments of the data. Reconstruction error is used to detect deviations indicating potential anomalies.
 
 - `04_trend_detection.ipynb`  
-  Detects gradual upward trends using rolling slopes and statistical trend tests (e.g., Mann-Kendall).
+Focuses on identifying gradual upward trends using rolling linear regression and non-parametric statistical tests like the Mann-Kendall trend test.
 
 ## Objectives
 
 - Identify early warning signs of failure
-- Compare performance of detection techniques across statistical and deep learning approaches
+- Compare performance of atistical vs. deep learning methods for anomaly detection
+- Visualize and benchmark detection performance against labeled anomalies from NAB
 
 ## Dataset Info
 
-- Source: NAB `realKnownCause/machine_temperature_system_failure.csv`
+- Source: NAB `realKnownCause/machine_temperature_system_failure.csv` from the NAB GitHub Repository: https://github.com/numenta/NAB
 - Features:  
   - `timestamp` – datetime  
   - `value` – temperature reading
+- Ground truth anomaly labels from NAB are loaded from ../labels/combined_windows.json for validation and scoring.
 
 
 
