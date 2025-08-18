@@ -24,7 +24,7 @@ def load_nab_anomaly_windows(file_name="machine_temperature_system_failure.csv")
     Load labeled anomaly windows for a given file from LABELS_URL.
     Uses label key format: 'realKnownCause/<file_name>'
     """
-    labels = _loadlabels_json()
+    labels = load_labels_json()
     label_key = f"realKnownCause/{file_name}"
     if label_key not in labels:
         return []
