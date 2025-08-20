@@ -17,14 +17,7 @@ def load_failure_windows(label_key, label_url):
 def load_dataset(name: str = 'machine_temperature') -> pd.DataFrame:
     cfg = DATASETS[name]
     base_url = cfg["base_url"].rstrip("/") + "/"
-
-    if cfg["type"] == "univariate":
-        df = pd.read_csv(base_url + cfg["file"])
-        df["timestamp"] = pd.to_datetime(df["timestamp"])
-        df = df.sort_values("timestamp").set_index("timestamp")
-        return df, load_failure_windows(cfg["labels_prefix"] + cfg["file"], cfg["label_url"])
-
-     # multivariate: list of files → merge on timestamp
+    
     dfs = []
     for f in cfg["files"]:
         df = pd.read_csv(base_url + f)
