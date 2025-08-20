@@ -6,15 +6,21 @@
 DATASETS = {
     # Univariate examples - machine temperature
     "machine_temperature": {
-        "type": "univariate",
-        "file": "machine_temperature_system_failure.csv",
+        "files": [
+            "ambient_temperature_system_failure.csv",
+            "cpu_utilization_asg_misconfiguration.csv",
+            "ec2_request_latency_system_failure.csv",
+            "machine_temperature_system_failure.csv",
+            "nyc_taxi.csv",
+            "rogue_agent_key_hold.csv",
+            "rogue_agent_key_updown.csv"
+            ],
         "labels_prefix": "realKnownCause/",
         "base_url": "https://raw.githubusercontent.com/hjalalin/nab-anomaly-detection/main/data/realKnownCause/",
         "label_url": "https://raw.githubusercontent.com/hjalalin/nab-anomaly-detection/main/data/labels/combined_windows.json"
     },
     # Multivariate (CloudWatch) 
     "aws_cloudwatch_cpu_net": {
-        "type": "multivariate",
         "files": [],
         "labels_prefix": "realAWSCloudwatch/",
         "base_url": "",
@@ -28,33 +34,57 @@ DATASETS = {
 # ---------------------------------------------------------------------
 DEFAULTS = {
     # --- Statistical: Global detectors ---
-    "Z_K": 3.0,                 # Z-score k
-    "IQR_K": 1.5,               # IQR multiplier
-    "MAD_K": 3.5,               # MAD multiplier
+    "stats_global": {
+        "z": {"enabled": True, "z_thresh": 3.0},
+        "iqr": {"enabled": True, "k": 1.5},
+        "mad": {"enabled": True,  "mad_z_thresh": 3.5}
+    },
 
     # --- Statistical: Local detectors ---
-    "ROLLING_WINDOW": 100,      # window length
-    "ROLLING_K": 3.0,           # k×σ for rolling mean/std
+    "stats_local": {
+        "rolling_z": {"enabled": True, "window": 100, "z_thresh": 3.0},
+        "rolling_iqr": {"enabled": False, "window": 100, "k": 1.5},
+        "rolling_mad": {"enabled": False, "window": 100, "mad_z_thresh": 3.5}, 
+    },
 
     # --- Statistical: Sequential detectors ---
-    "PCT_CHANGE": 0.05,         # 5% relative change
-    "CUSUM_THRESHOLD": 5.0,     # CUSUM detection threshold
-    "CUSUM_DRIFT": 0.0,         # CUSUM drift
+    "stats_sequential": {
+        "cusum": {"enabled": True, "k": 5.0, "drift": 0.0},
+        "ewma": {"enabled": False, "alpha": 0.2, "z_thresh": 3.0},
+        "pct_change":  {"enabled": True,  "pct_thresh": 0.05, "pct_use_abs": True},
+    },
 
     # --- Statistical: Trend detectors ---
-    "MK_ALPHA": 0.05,           # significance
+    "stats_trend": {
+        "mann_kendall": {"enabled": True, "alpha": 0.05},
+    },
 
-    # --- Machine Learning detectors ---
-    "ISOF_CONTAM": 0.01,        # Isolation Forest contamination
+    # --- Forecasting detectors (placeholders if np/pd only) ---
+    "forecast": {
+        "arima": {"enabled": False, "window": 20, "z_thresh": 3.0},
+        "prophet": {"enabled": False, "window": 20, "z_thresh": 3.0},
+    },
 
-    # --- Deep Learning (Autoencoders) ---
-    "SEQ_LEN": 100,             # window length for training
-    "AE_HIDDEN": 64,            # hidden dimension
-    "AE_LAYERS": 2,             # encoder/decoder layers
-    "AE_DROPOUT": 0.1,          # dropout
-    "TRAIN_EPOCHS": 50,         # default training epochs
-    "BATCH_SIZE": 32,
+    # --- Machine Learning detectors (not active in np/pd-only version) ---
+    "ml": {
+        "isolation_forest": {"enabled": False, "contamination": 0.01},
+    },
 
-    # --- Evaluation / Thresholding ---
-    "THRESHOLD_Q": 0.995       # quantile for anomaly threshold
+    # --- Deep Learning (Autoencoders etc.) ---
+    "dl": {
+        "autoencoder": {
+            "enabled": False,
+            "seq_len": 100,
+            "hidden": 64,
+            "layers": 2,
+            "dropout": 0.1,
+            "epochs": 50,
+            "batch_size": 32,
+        },
+    },
+
+    # --- Evaluation / Aggregation ---
+    "aggregate": {"mode": "any"},   # {"any","all","majority"}
+    "threshold": {"quantile": 0.995},
 }
+

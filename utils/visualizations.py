@@ -96,7 +96,7 @@ def plot_methods_subplots(
     sharex=True,
     figsize=None,
     max_cols=2,
-    marker="x",
+    marker="o",
     grid=True,
 ):
     """
@@ -126,7 +126,7 @@ def plot_methods_subplots(
         shade_windows(ax, windows, color="red", alpha=0.25, first_label="Failure Time")
         idx = _indices_from_preds(methods_preds[name], len(df))
         if len(idx) > 0:
-            ax.scatter(x[idx], y.iloc[idx], marker=marker, label=name)
+            ax.scatter(x[idx], y.iloc[idx], marker=marker, color='red', label=name)
         ax.set_title(name)
         if grid:
             ax.grid(True)
