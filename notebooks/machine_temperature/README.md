@@ -1,26 +1,23 @@
 # Machine Temperature Dataset
 
-This folder contains notebooks analyzing the `machine_temperature_system_failure.csv` dataset from the NAB (Numenta Anomaly Benchmark). This is a univariate time-series with labeled anomalies.
-The dataset captures temperature readings of an industrial machine leading up to a known system failure. 
+Notebooks analyzing the NAB machine_temperature_system_failure time series (univariate, labeled anomaly intervals). The data captures temperature readings from an industrial machine leading up to a known failure.
 
 ## Notebooks Included
 
 - `01_exploration.ipynb`  
-Visualizes the raw temperature time series, inspects statistical properties
+Visualizes the raw temperature time series, inspects statistical properties and failure windows
 
 - `02_statistical_methods.ipynb`  
-Implements statistical anomaly detection methods including Z-score, rolling mean, IQR, and MAD. Detected anomalies are compared directly against NAB-provided ground truth intervals.
+Implements statistical anomaly detection methods as a baseline
 
-- `03_lstm_autoencoder.ipynb`  
+- `03_deep_learning.ipynb`  
 Trains an LSTM autoencoder on normal segments of the data. Reconstruction error is used to detect deviations indicating potential anomalies.
 
-- `04_trend_detection.ipynb`  
-Focuses on identifying gradual upward trends using rolling linear regression and non-parametric statistical tests like the Mann-Kendall trend test.
 
 ## Objectives
 
 - Identify early warning signs of failure
-- Compare performance of atistical vs. deep learning methods for anomaly detection
+- Compare performance of statistical vs. deep learning methods for anomaly detection
 - Visualize and benchmark detection performance against labeled anomalies from NAB
 
 ## Dataset Info
