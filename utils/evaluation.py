@@ -16,7 +16,7 @@ def evaluate_predictions(df, preds, windows, early_tolerance="60min"):
         dict with counts and metrics (precision, recall, f1, coverage, early_warning_score).
     """
     preds = np.asarray(preds, dtype=bool)
-    timestamps = df.index.to_numpy()
+    timestamps = df['timestamp'].to_numpy()
 
     if isinstance(early_tolerance, str):
         early_tolerance = pd.to_timedelta(early_tolerance)
@@ -40,20 +40,25 @@ def evaluate_predictions(df, preds, windows, early_tolerance="60min"):
     # Coverage (window-level hit ratio)
     window_hits = 0
     early_hits = 0
-    for (s, e) in windows:
-        # detections inside window
+    n_windows = 0
+    for (s, e) in windows:        # detections inside 
+        
+        if e < min(df['timestamp']):
+            continue
+        n_windows  += 1
         inside = (timestamps >= np.datetime64(s)) & (timestamps <= np.datetime64(e))
         # detections in early tolerance zone
         early_zone = (timestamps >= np.datetime64(s - early_tolerance)) & (timestamps < np.datetime64(s))
-        
-        if np.any(preds[inside]):
-            window_hits += 1
-        elif np.any(preds[early_zone]):
+
+        if np.any(preds[early_zone]):
             early_hits += 1
             window_hits += 1  # count early detection as covering the window
 
-    coverage = window_hits / len(windows) if windows else 0.0
-    early_detection_rate = early_hits / len(windows) if windows else 0.0
+        elif np.any(preds[inside]):
+            window_hits += 1
+
+    coverage = window_hits / n_windows if windows else 0.0
+    early_detection_rate = early_hits / n_windows if windows else 0.0
 
     return {
         "tp": int(tp),
@@ -63,6 +68,6 @@ def evaluate_predictions(df, preds, windows, early_tolerance="60min"):
         "precision": precision,
         "recall": recall,
         "f1": f1,
-        "coverage": coverage,
+        "anomaly_window_detection_rate": coverage,
         "early_detection_rate": early_detection_rate
     }
