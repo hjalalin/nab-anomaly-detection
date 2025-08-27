@@ -1,6 +1,6 @@
 import pandas as pd
 import requests
-from utils.config import DATASETS 
+from configs.config import DATASETS 
 
 
 def load_labels_json(label_url):
@@ -17,21 +17,22 @@ def load_failure_windows(label_key, label_url):
 def load_dataset(name: str = 'machine_temperature') -> pd.DataFrame:
     cfg = DATASETS[name]
     base_url = cfg["base_url"].rstrip("/") + "/"
-    
+
     dfs = []
     for f in cfg["files"]:
         df = pd.read_csv(base_url + f)
+
         df["timestamp"] = pd.to_datetime(df["timestamp"])
         df = df.sort_values("timestamp")
         val_col = [c for c in df.columns if c != "timestamp"][0]
         df = df.rename(columns={val_col: f.split(".")[0]})
         dfs.append(df)
-    df = dfs[0]
+    
+    merged = dfs[0]
     for d in dfs[1:]:
-        df = pd.merge(df, d, on="timestamp", how="inner")
-    df = df.set_index("timestamp")
+        merged = pd.merge(merged, d, on="timestamp", how="inner")
 
-    windows = load_failure_windows(cfg["labels_prefix"] + cfg["files"][0], cfg["label_url"])
-    return df, windows
+    windows = load_failure_windows(cfg["labels_prefix"], cfg["label_url"])
+    return dfs, merged, windows
 
 

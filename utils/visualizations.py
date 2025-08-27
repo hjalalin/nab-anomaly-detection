@@ -6,11 +6,14 @@ import matplotlib.pyplot as plt
 # -----------------------------
 # 0) Helpers
 # -----------------------------
-def shade_windows(ax, windows, color="red", alpha=0.3, first_label="Anomaly window"):
+def shade_windows(ax, windows, color="red", alpha=0.3, first_label="Failure Window"):
     if not windows:
         return
     for i, (s, e) in enumerate(windows):
-        ax.axvspan(s, e, color=color, alpha=alpha, label=first_label if i == 0 else "_nolegend_")
+        s = pd.to_datetime(s)
+        e = pd.to_datetime(e)
+        ax.axvspan(s, e, color=color, alpha=alpha,
+                   label=first_label if i == 0 else "_nolegend_")
 
 
 def _indices_from_preds(preds, n):
@@ -31,67 +34,49 @@ def _indices_from_preds(preds, n):
 # -----------------------------
 # 1) Full series with shaded windows
 # -----------------------------
-def plot_full_series_with_windows(
-    df,
-    value_col="value",
-    windows=None,
-    title="Series with Labeled Anomalies",
-    series_label="Series",
-    ylabel="",
-    xlabel="Timestamp",
-    figsize=(14, 4),
-    grid=True,
-):
-    fig, ax = plt.subplots(1, 1, figsize=figsize)
-    ax.plot(df.index, df[value_col], label=series_label)
-    shade_windows(ax, windows, color="red", alpha=0.3, first_label="Failure Time")
-    ax.set_title(title)
-    ax.set_ylabel(ylabel)
-    ax.set_xlabel(xlabel)
-    if grid:
-        ax.grid(True)
-    ax.legend()
-    fig.tight_layout()
-    plt.show()
+def plot_full_series_with_windows(df,windows=None,title="", ylabel="",xlabel="Date",figsize=(14, 4),grid=True,subplots=False):
+    """   Plots all columns in `df` over time and Shades given anomaly/failure windows.    """
+    cols = [c for c in df.columns if c.lower() != "timestamp"]
+    if subplots and len(cols) > 1:
+        fig, axes = plt.subplots(len(df.columns), 1, figsize=(figsize[0], figsize[1]*len(df.columns)), sharex=True)
+        if not isinstance(axes, (list, np.ndarray)):
+            axes = [axes]
+        for ax, col in zip(axes, cols):
+            ax.plot(df["timestamp"], df[col], label=col)
+            if windows is not None:
+                shade_windows(ax, windows, color="red", alpha=0.3, first_label="Failure Time")
+            ax.set_title(f"{title} - {col}")
+            ax.set_ylabel(ylabel)
+            if grid:
+                ax.grid(True)
+            ax.legend()
+        axes[-1].set_xlabel(xlabel)
+        fig.tight_layout()
+        plt.show()
+    else:
+        fig, ax = plt.subplots(1, 1, figsize=figsize)
+        for col in cols:
+            ax.plot(df["timestamp"], df[col], label=col)
+        if windows is not None:
+            shade_windows(ax, windows, color="red", alpha=0.3, first_label="Failure Time")
+        ax.set_title(title)
+        ax.set_ylabel(ylabel)
+        ax.set_xlabel(xlabel)
+        if grid:
+            ax.grid(True)
+        ax.legend()
+        fig.tight_layout()
+        plt.show()
 
 
 # -----------------------------
-# 2) Overlay detections on top of shaded windows
-# -----------------------------
-def plot_series_with_windows_and_points(
-    df,
-    value_col="value",
-    preds=None,
-    windows=None,
-    title="Detected Anomalies",
-    series_label="Series",
-    point_label="Detected anomaly",
-    figsize=(14, 4),
-    marker="x",
-    grid=True,
-):
-    idx = _indices_from_preds(preds, len(df))
-    fig, ax = plt.subplots(1, 1, figsize=figsize)
-    ax.plot(df.index, df[value_col], label=series_label)
-    shade_windows(ax, windows, color="red", alpha=0.3, first_label="Failure Time")
-    if len(idx) > 0:
-        ax.scatter(df.index[idx], df[value_col].iloc[idx], marker=marker, label=point_label)
-    ax.set_title(title)
-    ax.set_xlabel("Timestamp")
-    if grid:
-        ax.grid(True)
-    ax.legend()
-    fig.tight_layout()
-    plt.show()
-
-
-# -----------------------------
-# 3) Multi-subplot comparison for multiple methods
+# 2) Multi-subplot comparison for multiple methods
 # -----------------------------
 def plot_methods_subplots(
     df,
     methods_preds,
-    value_col="value",
+    value_col,
+    offest = 0,
     windows=None,
     sharex=True,
     figsize=None,
@@ -99,9 +84,6 @@ def plot_methods_subplots(
     marker="o",
     grid=True,
 ):
-    """
-    methods_preds: {'Z-Score': preds_z, 'ARIMA': preds_arima, ...}
-    """
     names = list(methods_preds.keys())
     n = len(names)
     if n == 0:
@@ -118,7 +100,7 @@ def plot_methods_subplots(
         axes = np.array([axes])
     axes = axes.flatten()
 
-    x = df.index
+    x = df['timestamp']
     y = df[value_col]
     for i, name in enumerate(names):
         ax = axes[i]
@@ -126,31 +108,19 @@ def plot_methods_subplots(
         shade_windows(ax, windows, color="red", alpha=0.25, first_label="Failure Time")
         idx = _indices_from_preds(methods_preds[name], len(df))
         if len(idx) > 0:
-            ax.scatter(x[idx], y.iloc[idx], marker=marker, color='red', label=name)
-        ax.set_title(name)
+            ax.scatter(x[idx + offest], y[idx+offest], marker=marker, color='red', label=f'Detected Anomalies')
+        if len(names)>0:
+            ax.set_title(name)
         if grid:
             ax.grid(True)
         ax.legend(loc="upper right")
 
     for j in range(i + 1, len(axes)):
         axes[j].set_visible(False)
+    
+    plt.xlim(min(df['timestamp']), max(df['timestamp']))
 
     fig.tight_layout()
     plt.show()
 
-
-# -----------------------------
-# 4) Error + threshold plot
-# -----------------------------
-def plot_error_and_threshold(errors, thr, title="Error & Threshold", figsize=(14, 3), grid=True):
-    errors = np.asarray(errors)
-    fig, ax = plt.subplots(1, 1, figsize=figsize)
-    ax.plot(errors, lw=1)
-    ax.axhline(thr, color="red", linestyle="--", label="Threshold")
-    ax.set_title(title)
-    if grid:
-        ax.grid(True)
-    ax.legend()
-    fig.tight_layout()
-    plt.show()
 
