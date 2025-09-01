@@ -6,4 +6,13 @@ Shared folders at the same level as notebooks/:
 
 utils/ — common helper code
 
-data/ — datasets
+## Topics Covered
+
+- Data exploration and visualization
+- Statistical anomaly detection methods
+- LSTM and deep learning-based detection methods
+- Model evaluation and comparison
+
+
+> Each folder is self-contained and serves as a mini-project for a specific dataset type.
+

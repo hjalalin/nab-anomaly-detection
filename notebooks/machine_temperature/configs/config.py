@@ -63,7 +63,7 @@ DEFAULTS = {
     "dl": {
         "autoencoder": {
             "enabled": False,
-            "seq_len": 50,
+            "seq_len": 100,
             "hidden": 64,
             "layers": 2,
             "dropout": 0.1,

@@ -7,8 +7,8 @@ Notebooks analyzing the NAB machine_temperature_system_failure time series (univ
 - `01_exploration.ipynb`  
 Visualizes the raw temperature time series, inspects statistical properties and failure windows
 
-- `02_statistical_methods.ipynb`  
-Implements statistical anomaly detection methods as a baseline
+- `02_statistical_baselines.ipynb`  
+Implements statistical anomaly detection methods including Z-score, rolling mean, IQR, and MAD. Detected anomalies are compared directly against NAB-provided ground truth intervals.
 
 - `03_deep_learning.ipynb`  
 Trains an LSTM autoencoder on normal segments of the data. Reconstruction error is used to detect deviations indicating potential anomalies.
@@ -30,9 +30,6 @@ Trains an LSTM autoencoder on normal segments of the data. Reconstruction error 
 
 
 
-- A smaller version of the dataset (`machine_temperature_small.csv`) is used to keep the repo lightweight.
 - Full dataset available via [NAB GitHub](https://github.com/numenta/NAB)
 
----
 
-> These notebooks demonstrate a complete workflow from raw data to anomaly detection using interpretable and scalable methods.

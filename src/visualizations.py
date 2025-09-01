@@ -76,7 +76,7 @@ def plot_methods_subplots(
     df,
     methods_preds,
     value_col,
-    offest = 0,
+    offset = 0,
     windows=None,
     sharex=True,
     figsize=None,
@@ -108,7 +108,7 @@ def plot_methods_subplots(
         shade_windows(ax, windows, color="red", alpha=0.25, first_label="Failure Time")
         idx = _indices_from_preds(methods_preds[name], len(df))
         if len(idx) > 0:
-            ax.scatter(x[idx + offest], y[idx+offest], marker=marker, color='red', label=f'Detected Anomalies')
+            ax.scatter(x[idx + offset], y[idx+offset], marker=marker, color='red', label=f'Detected Anomalies')
         if len(names)>0:
             ax.set_title(name)
         if grid:
