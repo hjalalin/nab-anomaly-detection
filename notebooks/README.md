@@ -12,10 +12,8 @@ Each folder represents a separate time series subject and includes exploration, 
 ## Topics Covered
 
 - Data exploration and visualization
-- Classical anomaly detection methods
-- Machine learning & unsupervised models
-- LSTM and deep learning-based detection
-- Trend detection and rolling statistics
+- Statistical anomaly detection methods
+- LSTM and deep learning-based detection methods
 - Model evaluation and comparison
 
 
