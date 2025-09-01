@@ -1,13 +1,10 @@
-# Notebooks
+# notebooks
 
-This directory contains notebooks organized by dataset source.  
-Each folder represents a separate time series subject and includes exploration, modeling, and evaluation steps.
+Topic-organized Jupyter notebooks (e.g., machine_temperature, aws, traffic). 
 
-## Folder Structure
+Shared folders at the same level as notebooks/:
 
-### `machine_temperature/`
-- Time series of industrial machine temperature from the NAB dataset
-- Focused on LSTM-based anomaly detection and trend detection
+utils/ — common helper code
 
 ## Topics Covered
 
@@ -18,3 +15,4 @@ Each folder represents a separate time series subject and includes exploration, 
 
 
 > Each folder is self-contained and serves as a mini-project for a specific dataset type.
+
